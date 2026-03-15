@@ -68,24 +68,25 @@ background:"#fff"
 
             transactions.map((tx) => (
 
-              <tr
-                key={tx.id}
-                style={{
-                  color: tx.transaction_type === "credit" ? "green" : "red"
-                }}
-              >
+              <tr key={tx.id}>
 
-                <td>
-{new Date(tx.created_at).toLocaleString("en-IN", {
-  timeZone: "Asia/Kolkata"
-})}
-</td>
-                <td>{tx.transaction_type}</td>
-                <td>₹{tx.amount}</td>
-                <td>{tx.sender_id}</td>
-                <td>{tx.receiver_id}</td>
+  <td>
+    {new Date(tx.created_at).toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata"
+    })}
+  </td>
 
-              </tr>
+  <td className={tx.transaction_type === "credit" ? "credit" : "debit"}>
+    {tx.transaction_type}
+  </td>
+
+  <td>₹{tx.amount}</td>
+
+  <td>{tx.sender_id}</td>
+
+  <td>{tx.receiver_id}</td>
+
+</tr>
 
             ))
 

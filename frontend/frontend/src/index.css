@@ -1,9 +1,31 @@
 body{
-  margin:0;
-  background:lightgray
   font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
 }
 
-h2{
-  color:#333;
+.container{
+  width: 80%;
+  margin: auto;
+}
+
+button{
+  padding: 8px 16px;
+  background-color: #007bff;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover{
+  background-color:#0056b3;
+}
+.credit{
+color:green;
+font-weight:bold;
+}
+
+.debit{
+color:red;
+font-weight:bold;
 }
