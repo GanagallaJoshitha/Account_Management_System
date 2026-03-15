@@ -1,52 +1,63 @@
 import { useState } from "react"
-import api from "../api"
 import { useNavigate } from "react-router-dom"
+import api from "../api"
 
-function Login(){
+function Login() {
 
-const navigate = useNavigate()
+  const navigate = useNavigate()
 
-const [email,setEmail] = useState("")
-const [password,setPassword] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
 
-const handleLogin = async ()=>{
+  const loginUser = async () => {
 
-const res = await api.post("/auth/login",{
-email,
-password
-})
+    try {
 
-localStorage.setItem("token",res.data.token)
+      const response = await api.post("/auth/login", {
+        email,
+        password
+      })
 
-navigate("/dashboard")
+      const token = response.data.token
 
-}
+      localStorage.setItem("token", token)
 
-return(
+      navigate("/dashboard")
 
-<div>
+    } catch (err) {
 
-<h2>Login</h2>
+      setError("Invalid email or password")
 
-<input
-placeholder="Email"
-onChange={(e)=>setEmail(e.target.value)}
-/>
+    }
 
-<input
-type="password"
-placeholder="Password"
-onChange={(e)=>setPassword(e.target.value)}
-/>
+  }
 
-<button onClick={handleLogin}>
-Login
-</button>
+  return (
+    <div>
 
-</div>
+      <h2>User Login</h2>
 
-)
+      {error && <p style={{color:"red"}}>{error}</p>}
 
+      <input
+        type="email"
+        placeholder="Enter email"
+        onChange={(e)=>setEmail(e.target.value)}
+      />
+
+      <input
+        type="password"
+        placeholder="Enter password"
+        onChange={(e)=>setPassword(e.target.value)}
+      />
+
+      <button onClick={loginUser}>
+        Login
+      </button>
+
+    </div>
+  )
 }
 
 export default Login

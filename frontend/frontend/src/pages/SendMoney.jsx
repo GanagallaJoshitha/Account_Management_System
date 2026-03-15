@@ -3,51 +3,64 @@ import api from "../api"
 
 function SendMoney(){
 
-const [email,setEmail] = useState("")
-const [amount,setAmount] = useState("")
+  const [receiver,setReceiver] = useState("")
+  const [amount,setAmount] = useState("")
+  const [message,setMessage] = useState("")
 
-const transfer = async ()=>{
+  const transferFunds = async () => {
 
-const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token")
 
-await api.post("/account/transfer",
-{
-receiverEmail:email,
-amount:Number(amount)
-},
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-})
+    try {
 
-alert("Transfer Successful")
+      await api.post("/account/transfer",
+      {
+        receiverEmail: receiver,
+        amount: Number(amount)
+      },
+      {
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
 
-}
+      setMessage("Money transferred successfully")
 
-return(
+    } catch(error) {
 
-<div>
+      setMessage(
+        error.response?.data?.message || "Transfer failed"
+      )
 
-<h2>Send Money</h2>
+    }
 
-<input
-placeholder="Receiver Email"
-onChange={(e)=>setEmail(e.target.value)}
-/>
+  }
 
-<input
-placeholder="Amount"
-onChange={(e)=>setAmount(e.target.value)}
-/>
+  return(
 
-<button onClick={transfer}>
-Send
-</button>
+    <div>
 
-</div>
+      <h2>Transfer Money</h2>
 
-)
+      {message && <p>{message}</p>}
+
+      <input
+        placeholder="Receiver Email"
+        onChange={(e)=>setReceiver(e.target.value)}
+      />
+
+      <input
+        placeholder="Amount"
+        onChange={(e)=>setAmount(e.target.value)}
+      />
+
+      <button onClick={transferFunds}>
+        Send Money
+      </button>
+
+    </div>
+
+  )
 
 }
 

@@ -1,65 +1,77 @@
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import api from "../api"
 
 function Statement(){
 
-const [data,setData] = useState([])
+  const [transactions,setTransactions] = useState([])
 
-useEffect(()=>{
+  useEffect(()=>{
 
-const token = localStorage.getItem("token")
+    const fetchData = async () => {
 
-api.get("/account/statement",{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}).then(res=>{
-setData(res.data)
-})
+      const token = localStorage.getItem("token")
 
-},[])
+      const res = await api.get("/account/statement",{
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
 
-return(
+      setTransactions(res.data)
 
-<div>
+    }
 
-<h2>Account Statement</h2>
+    fetchData()
 
-<table border="1">
+  },[])
 
-<thead>
+  return(
 
-<tr>
-<th>Date</th>
-<th>Type</th>
-<th>Amount</th>
-</tr>
+    <div>
 
-</thead>
+      <h2>Transaction History</h2>
 
-<tbody>
+      <table border="1">
 
-{data.map(tx=>(
-<tr key={tx.id}
-style={{
-color:tx.transaction_type==="credit"
-?"green":"red"
-}}>
+        <thead>
 
-<td>{tx.created_at}</td>
-<td>{tx.transaction_type}</td>
-<td>₹{tx.amount}</td>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Sender</th>
+            <th>Receiver</th>
+          </tr>
 
-</tr>
-))}
+        </thead>
 
-</tbody>
+        <tbody>
 
-</table>
+          {transactions.map(item => (
 
-</div>
+            <tr key={item.id}
+              style={{
+                color: item.transaction_type === "credit" ? "green" : "red"
+              }}
+            >
 
-)
+              <td>{item.created_at}</td>
+              <td>{item.transaction_type}</td>
+              <td>₹{item.amount}</td>
+              <td>{item.sender_id}</td>
+              <td>{item.receiver_id}</td>
+
+            </tr>
+
+          ))}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  )
 
 }
 
