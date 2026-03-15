@@ -16,7 +16,7 @@ export const getBalance = async (req, res) => {
 
   res.json(data)
 }
-export const transferMoney = async (req, res) => {
+export const processTransfer = async (req, res) => {
 
   const senderId = req.user.id
   const { receiverEmail, amount } = req.body
@@ -73,7 +73,7 @@ export const transferMoney = async (req, res) => {
 
   res.json({ message: "Transfer successful" })
 }
-export const getStatement = async (req, res) => {
+export const fetchTransactions = async (req, res) => {
 
   try {
 
