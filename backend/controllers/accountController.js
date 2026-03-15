@@ -75,17 +75,42 @@ export const transferMoney = async (req, res) => {
 }
 export const getStatement = async (req, res) => {
 
-  const userId = req.user.id
+  try {
+
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      return res.status(400).json({
+        message: error.message
+      })
+    }
+
+    res.json(data)
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: "Failed to fetch transactions"
+    })
+
+  }
+
+}
+export const getUsers = async (req, res) => {
 
   const { data, error } = await supabase
-    .from("transactions")
-    .select("*")
-    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-    .order("created_at", { ascending: false })
+    .from("users")
+    .select("id, name, email")
 
   if (error) {
-    return res.status(400).json({ message: error.message })
+    return res.status(500).json({
+      message: "Error fetching users"
+    })
   }
 
   res.json(data)
+
 }

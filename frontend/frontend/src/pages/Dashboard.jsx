@@ -2,69 +2,64 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import api from "../api"
 
-function Dashboard(){
+function Dashboard() {
 
   const [balance, setBalance] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-  const token = localStorage.getItem("token")
+  useEffect(() => {
 
-  useEffect(()=>{
+    const fetchBalance = async () => {
 
-    const loadBalance = async () => {
+      const token = localStorage.getItem("token")
 
       try {
 
-        const result = await api.get("/account/balance", {
-          headers:{
-            Authorization:`Bearer ${token}`
+        const res = await api.get("/account/balance", {
+          headers: {
+            Authorization: `Bearer ${token}`
           }
         })
 
-        setBalance(result.data.balance)
+        setBalance(res.data.balance)
 
-      } catch(err) {
+      } catch (error) {
 
-        console.log("Unable to fetch balance")
+        console.log("Error fetching balance")
 
       }
 
+      setLoading(false)
+
     }
 
-    loadBalance()
+    fetchBalance()
 
-  },[])
+  }, [])
 
-  const handleLogout = () => {
-
-    localStorage.removeItem("token")
-
-    window.location.href = "/login"
-
-  }
-
-  return(
+  return (
 
     <div>
 
       <h1>Account Dashboard</h1>
 
-      <h3>Available Balance : ₹{balance}</h3>
+      {loading ? (
+        <p>Loading balance...</p>
+      ) : (
+        <h2>Current Balance: ₹{balance}</h2>
+      )}
 
-      <br/>
+      <br />
 
-      <Link to="/send">Transfer Money</Link>
+      <Link to="/send">
+        <button>Send Money</button>
+      </Link>
 
-      <br/>
-      <br/>
+      <br /><br />
 
-      <Link to="/statement">View Statement</Link>
-
-      <br/>
-      <br/>
-
-      <button onClick={handleLogout}>
-        Logout
-      </button>
+      <Link to="/statement">
+        <button>View Account Statement</button>
+      </Link>
 
     </div>
 

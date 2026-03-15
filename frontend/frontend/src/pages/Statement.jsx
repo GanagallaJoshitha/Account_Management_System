@@ -1,40 +1,54 @@
 import { useEffect, useState } from "react"
 import api from "../api"
 
-function Statement(){
+function Statement() {
 
-  const [transactions,setTransactions] = useState([])
+  const [transactions, setTransactions] = useState([])
 
-  useEffect(()=>{
+  useEffect(() => {
 
     const fetchData = async () => {
 
-      const token = localStorage.getItem("token")
+      try {
 
-      const res = await api.get("/account/statement",{
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      })
+        const token = localStorage.getItem("token")
 
-      setTransactions(res.data)
+        const res = await api.get("/account/statement", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        console.log("Transactions:", res.data)
+
+        setTransactions(res.data)
+
+      } catch (error) {
+        console.error("Error fetching statement:", error)
+      }
 
     }
 
     fetchData()
 
-  },[])
+  }, [])
 
-  return(
+ return(
 
-    <div>
+<div style={{
+maxWidth:"900px",
+margin:"40px auto",
+padding:"20px",
+borderRadius:"10px",
+boxShadow:"0 4px 10px rgba(0,0,0,0.1)",
+background:"#fff"
+}}>
 
-      <h2>Transaction History</h2>
+<h2> Account Activity</h2>
 
       <table border="1">
 
         <thead>
-
           <tr>
             <th>Date</th>
             <th>Type</th>
@@ -42,28 +56,40 @@ function Statement(){
             <th>Sender</th>
             <th>Receiver</th>
           </tr>
-
         </thead>
 
         <tbody>
 
-          {transactions.map(item => (
-
-            <tr key={item.id}
-              style={{
-                color: item.transaction_type === "credit" ? "green" : "red"
-              }}
-            >
-
-              <td>{item.created_at}</td>
-              <td>{item.transaction_type}</td>
-              <td>₹{item.amount}</td>
-              <td>{item.sender_id}</td>
-              <td>{item.receiver_id}</td>
-
+          {transactions.length === 0 ? (
+            <tr>
+              <td colSpan="5">No transactions found</td>
             </tr>
+          ) : (
 
-          ))}
+            transactions.map((tx) => (
+
+              <tr
+                key={tx.id}
+                style={{
+                  color: tx.transaction_type === "credit" ? "green" : "red"
+                }}
+              >
+
+                <td>
+{new Date(tx.created_at).toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+})}
+</td>
+                <td>{tx.transaction_type}</td>
+                <td>₹{tx.amount}</td>
+                <td>{tx.sender_id}</td>
+                <td>{tx.receiver_id}</td>
+
+              </tr>
+
+            ))
+
+          )}
 
         </tbody>
 

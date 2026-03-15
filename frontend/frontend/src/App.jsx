@@ -1,4 +1,4 @@
-import { BrowserRouter,Routes,Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import Signup from "./pages/Signup"
 import Login from "./pages/Login"
@@ -6,26 +6,54 @@ import Dashboard from "./pages/Dashboard"
 import SendMoney from "./pages/SendMoney"
 import Statement from "./pages/Statement"
 
-function App(){
+import ProtectedRoute from "./components/ProtectedRoute"
 
-return(
+function App() {
 
-<BrowserRouter>
+  return (
 
-<Routes>
+    <BrowserRouter>
 
-<Route path="/" element={<Signup/>}/>
-<Route path="/login" element={<Login/>}/>
-<Route path="/dashboard" element={<Dashboard/>}/>
-<Route path="/send" element={<SendMoney/>}/>
-<Route path="/statement" element={<Statement/>}/>
+      <Routes>
 
-</Routes>
+        {/* Default route */}
+        <Route path="/" element={<Navigate to="/login" />} />
 
-</BrowserRouter>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
 
-)
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/send"
+          element={
+            <ProtectedRoute>
+              <SendMoney />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/statement"
+          element={
+            <ProtectedRoute>
+              <Statement />
+            </ProtectedRoute>
+          }
+        />
+
+      </Routes>
+
+    </BrowserRouter>
+
+  )
 }
 
 export default App
